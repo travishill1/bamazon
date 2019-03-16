@@ -32,6 +32,7 @@ connection.connect(function(err) {
     displayAll();
   });
 
+
   // query the database for all items being sold and display to user
   function displayAll() {
     connection.query("SELECT * from products", function(err, results) {
@@ -50,23 +51,27 @@ connection.connect(function(err) {
   }
 
   function start() {
+
     connection.query("SELECT * from products", function(err, results) {
         if (err) throw err;
-          inquirer
-      .prompt([
-        {
-          name: "choice",
-          type: "rawlist",
-          choices: function() {
+        const choices = function() {
             var choiceArray = [];
             for (var i = 0; i < results.length; i++) {
               choiceArray.push(results[i].product_name);
             }
             return choiceArray;
+        }
+          inquirer
+      .prompt([
+        {
+          name: "choice",
+          type: "rawlist",
+          choices: choices(),
+          filter: function(choice){
+              choiceArray = choices();
+              return choiceArray.indexOf(choice)+1;
           },
-        //   filter: function() {
-
-        //   },
+          
           message: "What product would you like to buy?",
           validate: function(value) {
             if (isNaN(value)) {
@@ -103,13 +108,14 @@ connection.connect(function(err) {
             console.log(results[0].stock_quantity);
 
             // check to see if there is enough stock for how much the user wants
-            if (results.stock_quantity > amountWant) {
+            if (results[0].stock_quantity > amountWant) {
               let newAmount = results[0].stock_quantity - amountWant;
               let totalPrice = amountWant * price;
 
               // there was enough stock, so update db, let the user know, and start over
               updateDB(newAmount, id);
               console.log(`You have purchased ${amountWant} products for a total of $${totalPrice}`);
+              displayAll();
               start();
             }
     
