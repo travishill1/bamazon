@@ -27,78 +27,116 @@ var connection = mysql.createConnection({
 
 
 connection.connect(function(err) {
-    if(err) throw err;
-    console.log("connected as id " + connection.threadId);
-    // connection.end();
-})
+    if (err) throw err;
+    // show all items after the connection is made
+    displayAll();
+  });
 
-inquirer.prompt([
-    {
-        type: "list",
-        name: "postbid",
-        message: "Hi there, would you like to ",
-        choices: ["Post an Item","Bid on an Item"]
-    }
-]).then(function(answers){
-    if (answers.postbid === "Post an Item") {
-            inquirer.prompt([
-                {
-                    type: "input",
-                    name: "postproduct",
-                    message: "What is the name of the item you would like to bid?",
-                }, {
-                    type: "input",
-                    name: "postbid",
-                    message: "How much would you like to set the starting bid at?"
-                }
-            ]).then(function(postProduct){
-                // console.log(postProduct.postproduct);
-            createProduct(postProduct.postproduct, postProduct.postbid);
-            readProducts();
-            // connection.end();
-        })
-    }
-    if (answers.postbid === "Bid on an Item") {
-        console.log("Select the item you want to bid on");
-        readProducts();
-        inquirer.prompt([
-            {
-            type: "input",
-            name: "pickitem",
-            message: "Type the ID of the product you want to bid on ",
-            }, 
-        ]).then(function(choice){
-            console.log(pickitem)
-            let userSelect = choice.pickitem;
-            connection.query("select bid where id = ?",
-            userSelect, 
-            function(err, results){
-                if(err) throw err;
-                let currentbid = results[0].bid;
-            inquirer.prompt([
-            {
-            type: "input",
-            name: "placebid",
-            message: "How much would you like to bid on the item?",
-            validate: function(value){
-                if(currentbid > value){
-                    console.log("You must bid higher than" + currentbid)
-                    return false
-                } else if(currentbid < value){
-                    return true
-                }
-                }
-            }
-            ])
-            }
-        )}
-            )};
+  // query the database for all items being sold and display to user
+  function displayAll() {
+    connection.query("SELECT * from products", function(err, results) {
+      if (err) throw err;
+      console.log("Available items:");
+      for (let i = 0; i < results.length; i++) {
+        console.log(`
+        ID: ${results[i].item_id}
+        Product name: ${results[i].product_name}
+        Price: $${results[i].price}
+        Stock Quantity: ${results[i].stock_quantity}`);
+      }
+    //   now run the prompts for the user
+      start();
+    });
+  }
 
-function readProducts(){
-    connection.query("select * from items", function(err, results) {
+  function start() {
+    connection.query("SELECT * from products", function(err, results) {
         if (err) throw err;
-        console.log(results);
-        // connection.end();
-    })
-}
+          inquirer
+      .prompt([
+        {
+          name: "choice",
+          type: "rawlist",
+          choices: function() {
+            var choiceArray = [];
+            for (var i = 0; i < results.length; i++) {
+              choiceArray.push(results[i].product_name);
+            }
+            return choiceArray;
+          },
+        //   filter: function() {
 
+        //   },
+          message: "What product would you like to buy?",
+          validate: function(value) {
+            if (isNaN(value)) {
+              return false;
+            } else {
+              return true;
+            }
+          }
+        },
+        {
+          name: "howmuch",
+          type: "input",
+          message: "How much would you like to buy?",
+          validate: function(value) {
+            if (isNaN(value)) {
+              return false;
+            } else {
+              return true;
+            }
+          }
+        }
+      ])
+      .then(function(answer) {
+        let amountWant = parseInt(answer.howmuch);
+        console.log(amountWant);
+        let id = answer.choice;
+        console.log(id)
+        connection.query(
+          "SELECT stock_quantity, price FROM products WHERE item_id = ?",
+          id,
+          function(err, results) {
+            if (err) throw err;
+            let price = results[0].price;
+            console.log(results[0].stock_quantity);
+
+            // check to see if there is enough stock for how much the user wants
+            if (results.stock_quantity > amountWant) {
+              let newAmount = results[0].stock_quantity - amountWant;
+              let totalPrice = amountWant * price;
+
+              // there was enough stock, so update db, let the user know, and start over
+              updateDB(newAmount, id);
+              console.log(`You have purchased ${amountWant} products for a total of $${totalPrice}`);
+              start();
+            }
+    
+        else {
+          // not enough stock available, so apologize and start over
+          console.log("We don't have enough stock to meet your requirements. Try again...");
+          start();
+        }
+      })
+  })
+})
+  };
+  
+
+  function updateDB(newAmount, id) {
+    connection.query(
+      "UPDATE products SET ? WHERE ?",
+      [
+        {
+          stock_quantity: newAmount,
+        },
+        {
+          item_id: id
+        }
+      ],
+      function(err) {
+        if (err) throw err;
+      }
+    );
+  }
