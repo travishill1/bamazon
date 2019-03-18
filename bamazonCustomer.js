@@ -42,8 +42,7 @@ connection.connect(function(err) {
         console.log(`
         ID: ${results[i].item_id}
         Product name: ${results[i].product_name}
-        Price: $${results[i].price}
-        Stock Quantity: ${results[i].stock_quantity}`);
+        Price: $${results[i].price}`);
       }
     //   now run the prompts for the user
       start();
