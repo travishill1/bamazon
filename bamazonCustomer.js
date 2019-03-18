@@ -99,20 +99,27 @@ connection.connect(function(err) {
         let id = answer.choice;
         console.log(id)
         connection.query(
-          "SELECT stock_quantity, price FROM products WHERE item_id = ?",
+          "SELECT stock_quantity, price, product_sales FROM products WHERE item_id = ?",
           id,
           function(err, results) {
             if (err) throw err;
             let price = results[0].price;
-            console.log(results[0].stock_quantity);
+            // console.log(results[0].stock_quantity);
 
             // check to see if there is enough stock for how much the user wants
             if (results[0].stock_quantity > amountWant) {
               let newAmount = results[0].stock_quantity - amountWant;
               let totalPrice = amountWant * price;
+              console.log(results[0].product_sales);
+              let productSales = parseFloat(results[0].product_sales);
+
+              console.log(newAmount);
+              console.log(totalPrice);
+              console.log(productSales);
+              console.log(id);
 
               // there was enough stock, so update db, let the user know, and start over
-              updateDB(newAmount, id);
+              updateDB(newAmount, totalPrice, productSales, id);
               console.log(`You have purchased ${amountWant} products for a total of $${totalPrice}`);
               displayAll();
               start();
@@ -129,12 +136,14 @@ connection.connect(function(err) {
   };
   
 
-  function updateDB(newAmount, id) {
+  function updateDB(newAmount, totalPrice, productSales, id) {
+    let finalProductSales = productSales + totalPrice;
     connection.query(
       "UPDATE products SET ? WHERE ?",
       [
         {
           stock_quantity: newAmount,
+          product_sales: finalProductSales
         },
         {
           item_id: id
