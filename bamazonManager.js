@@ -29,7 +29,6 @@ connection.connect(function(err) {
     managerMenu();
   });
 
-
   function managerMenu() {
     inquirer
       .prompt({
@@ -58,8 +57,6 @@ connection.connect(function(err) {
       });
   }
 
-
-
 // View Products for Sale - the app should list every available item: the item IDs, names, prices, and quantities.
 
 function viewProducts(){
@@ -77,12 +74,10 @@ function viewProducts(){
       });
 }
 
-
-
 // View Low Inventory - it should list all items with an inventory count lower than five.
 
 function viewLow(){
-    connection.query("SELECT * from products WHERE stock_quantity<100", function(err, results) {
+    connection.query("SELECT * from products WHERE stock_quantity<5", function(err, results) {
         if (err) throw err;
         console.log("Available items:");
         for (let i = 0; i < results.length; i++) {
@@ -95,8 +90,6 @@ function viewLow(){
         managerMenu();
       });
 }
-
-
 
 // Add to Inventory - should display a prompt that will let the manager "add more" of any item currently in the store.
 
@@ -186,11 +179,10 @@ function updateDB(newAmount, id) {
         );
       }
 
-
 // Add New Product - it should allow the manager to add a completely new product to the store.
 
 function addNew(){
-  // prompt for info about the item being put up for auction
+  // prompt for info about the item being put up for sale
   inquirer
     .prompt([
       {
@@ -239,7 +231,6 @@ function addNew(){
         function(err) {
           if (err) throw err;
           console.log("Your product was added successfully!");
-          // re-prompt the user for if they want to bid or post
           managerMenu();
         }
       );

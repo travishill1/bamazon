@@ -10,7 +10,6 @@ var connection = mysql.createConnection({
     database: "bamazon"
 });
 
-
 // Menu:
 // 1.  View Product Sales by Department
 // 2.  Create New Department
@@ -21,8 +20,7 @@ connection.connect(function(err) {
     supervisorMenu();
   });
 
-
-  function supervisorMenu() {
+function supervisorMenu() {
     inquirer
       .prompt({
         name: "supervisorStart",
@@ -86,10 +84,10 @@ function viewByDepartment(){
     });
   }
 
-// 2. Create New Department -
+// 2. Create New Department
 
 function createDepartment(){
-    // prompt for info about the item being put up for auction
+    // prompt for info about the department being created
     inquirer
       .prompt([
         {
@@ -120,7 +118,6 @@ function createDepartment(){
           function(err) {
             if (err) throw err;
             console.log("Your department was added successfully!");
-            // re-prompt the user for if they want to bid or post
             supervisorMenu();
           }
         );

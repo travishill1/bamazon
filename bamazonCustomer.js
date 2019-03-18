@@ -126,7 +126,7 @@ connection.connect(function(err) {
             }
     
         else {
-          // not enough stock available, so apologize and start over
+          // not enough stock available, so start over
           console.log("We don't have enough stock to meet your requirements. Try again...");
           start();
         }
@@ -134,7 +134,6 @@ connection.connect(function(err) {
   })
 })
   };
-  
 
   function updateDB(newAmount, totalPrice, productSales, id) {
     let finalProductSales = productSales + totalPrice;
