@@ -1,5 +1,6 @@
 var mysql = require("mysql");
 const inquirer = require("inquirer");
+const table = require("table");
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -16,7 +17,7 @@ var connection = mysql.createConnection({
 
 connection.connect(function(err) {
     if (err) throw err;
-    // show all items after the connection is made
+    //run supervisor menu prompt after connection is made
     supervisorMenu();
   });
 
@@ -51,24 +52,39 @@ connection.connect(function(err) {
 // The total_profit column should be calculated on the fly using the difference between 
 // over_head_costs and product_sales. total_profit should not be stored in any database. You should use a custom alias.
 
+// NEED GROUP BY
+// NEED JOIN
 function viewByDepartment(){
-    connection.query("SELECT * from products", function(err, results) {
-        if (err) throw err;
-        console.log("Available items:");
-        for (let i = 0; i < results.length; i++) {
-          console.log(`
-          ID: ${results[i].item_id}
-          Product name: ${results[i].product_name}
-          Price: $${results[i].price}
-          Stock Quantity: ${results[i].stock_quantity}`);
+    connection.query(
+        `
+        SELECT departments.department_id, departments.department_name, departments.over_head_costs, 
+        SUM(products.product_sales) AS department_sales, (SUM(products.product_sales) - departments.over_head_costs) 
+        AS total_profit FROM departments LEFT JOIN products ON products.department_name = departments.department_name 
+        GROUP BY departments.department_id 
+        ORDER BY departments.department_id ASC
+        `, function(err,response){
+            if (err) throw err;
+        let stats = [['Department_ID','Department_Name', 'Department_Over_Head_Costs', 'Product_Sales', 'Total_Profit']]
+        
+        for(let i = 0; i < response.length; i++){
+            stats.push([
+                response[i].department_id, 
+                response[i].department_name, 
+                response[i].over_head_costs, 
+                response[i].department_sales, 
+                response[i].total_profit
+            ])
         }
-        managerMenu();
-      });
-}
-
-
-
-
+        //  console.log(total_profit);
+        
+        // TABLE
+        // let tableresults = New table(stats);
+         let tableresults = table.table(stats);
+         console.log(tableresults);
+        
+        supervisorMenu();
+    });
+  }
 
 // 2. Create New Department -
 
