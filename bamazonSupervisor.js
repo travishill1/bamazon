@@ -77,53 +77,35 @@ function createDepartment(){
     inquirer
       .prompt([
         {
-          name: "item",
+          name: "departmentadd",
           type: "input",
-          message: "What is the name of the product you would like to add?"
+          message: "What is the name of the department you would like to add?"
         },
         {
-          name: "department",
+          name: "overheadcosts",
           type: "input",
-          message: "What department would you like to place your new product in?"
-        },
-        {
-          name: "price",
-          type: "input",
-          message: "What is the price per unit?",
+          message: "What is the overhead cost of the department?",
           validate: function(value) {
               if (isNaN(value) === false) {
                 return true;
               }
               return false;
             }
-        },
-        {
-          name: "quantity",
-          type: "input",
-          message: "How many units are available for sale (stock)?",
-          validate: function(value) {
-            if (isNaN(value) === false) {
-              return true;
-            }
-            return false;
-          }
         }
       ])
       .then(function(answer) {
-        // when finished prompting, insert a new product into the db with that info
+        // when finished prompting, insert a new department into the db with that info
         connection.query(
-          "INSERT INTO products SET ?",
+          "INSERT INTO departments SET ?",
           {
-            product_name: answer.item,
-            department_name: answer.department,
-            price: answer.price || 0,
-            stock_quantity: answer.quantity || 0
+            department_name: answer.departmentadd,
+            over_head_costs: answer.overheadcosts,
           },
           function(err) {
             if (err) throw err;
-            console.log("Your product was added successfully!");
+            console.log("Your department was added successfully!");
             // re-prompt the user for if they want to bid or post
-            managerMenu();
+            supervisorMenu();
           }
         );
       });
