@@ -22,7 +22,7 @@ The second asks how many units of the product they would like to buy.
 <br>
 <strong>bamazonSupervisor</strong> - Running this application will allow the user to pick between two options: <br>
 1) View Product Sales by Department - logs in the console a table that joins the data from the products table and departments table.  This table shows the overhead costs, product sales, and total profits of each department. <br>
-2) Create New Department - allows the user to create a new department with a specified overhead costs.  <br>
+2) Create New Department - allows the user to create a new department with a specified overhead cost.  <br>
 <br>
 <br>
 <strong>Technologies Used:</strong> <br>

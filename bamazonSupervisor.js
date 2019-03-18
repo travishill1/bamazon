@@ -25,11 +25,11 @@ function supervisorMenu() {
       .prompt({
         name: "supervisorStart",
         type: "list",
-        message: "MANAGER: What would you like to do?",
+        message: "SUPERVISOR: What would you like to do?",
         choices: ["VIEW_Product_Sales", "CREATE_Department"]
       })
       .then(function(answer) {
-        // based on their answer, either call the bid or the post functions
+        // based on their answer, either view product sales by department or create a new department
         if (answer.supervisorStart === "VIEW_Product_Sales") {
             viewByDepartment();
         }
