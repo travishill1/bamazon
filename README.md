@@ -17,6 +17,9 @@ The second asks how many units of the product they would like to buy.
 <strong>Example Video:</strong> <a href="https://drive.google.com/file/d/1Lhac9BR2txa02ZH_BtwHvmWI7xF3o8Cj/view">Watch</a>
 <br>
 <br>
+<hr>
+<br>
+<br>
 <strong>bamazonManager</strong> - Running this application will allow the user to pick between four options: <br>
 1) View Products for Sale - logs in the console all the products currently up for sale. <br>
 2) View Low Inventory - logs in the console all the products that have less than 5 units left. <br>
@@ -24,6 +27,7 @@ The second asks how many units of the product they would like to buy.
 4) Add New Product - allows the user to create a new product in the database. <br>
 <br>
 <strong>Example Video:</strong> <a href="https://drive.google.com/file/d/1pjABPkeIkACEAWILSQmCgIRZhzaiQtJ3/view">Watch</a>
+<hr>
 <br>
 <br>
 <strong>bamazonSupervisor</strong> - Running this application will allow the user to pick between two options: <br>
@@ -31,6 +35,7 @@ The second asks how many units of the product they would like to buy.
 2) Create New Department - allows the user to create a new department with a specified overhead cost.  <br>
 <br>
 <strong>Example Video:</strong> <a href="https://drive.google.com/file/d/1uV0IoyFwV_v4W7vennpU7SCmSlPHw8Mi/view">Watch</a>
+<hr>
 <br>
 <br>
 <strong>Technologies Used:</strong> <br>
